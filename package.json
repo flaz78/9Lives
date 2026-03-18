@@ -1,0 +1,13 @@
+{
+    "name": "9lives-ai",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "pnpm -r --parallel dev",
+        "build": "pnpm -r build",
+        "test": "pnpm -r test"
+    },
+    "devDependencies": {
+        "typescript": "^5.7.3"
+    }
+}

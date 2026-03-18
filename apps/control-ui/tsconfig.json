@@ -1,0 +1,18 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "composite": false,
+        "declaration": false,
+        "declarationMap": false,
+        "useDefineForClassFields": false,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": false
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

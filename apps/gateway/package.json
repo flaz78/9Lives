@@ -1,0 +1,48 @@
+{
+    "name": "@9lives/gateway",
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc --build"
+    },
+    "dependencies": {
+        "@9lives/shared": "workspace:*",
+        "@hapi/boom": "^10.0.1",
+        "@whiskeysockets/baileys": "^6.7.16",
+        "docx": "^9.6.0",
+        "dotenv": "^16.4.7",
+        "exceljs": "^4.4.0",
+        "express": "^4.21.2",
+        "imapflow": "^1.0.186",
+        "js-yaml": "^4.1.0",
+        "mailparser": "^3.7.2",
+        "mammoth": "^1.11.0",
+        "node-cron": "^3.0.3",
+        "node-telegram-bot-api": "^0.66.0",
+        "nodemailer": "^6.10.1",
+        "openai": "^4.86.2",
+        "p-queue": "^8.1.0",
+        "pdf-parse": "^2.4.5",
+        "pg": "^8.13.1",
+        "playwright": "^1.52.0",
+        "qrcode": "^1.5.4",
+        "ws": "^8.18.0",
+        "zod": "^3.24.2"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/js-yaml": "^4.0.9",
+        "@types/mailparser": "^3.4.6",
+        "@types/node": "^22.13.4",
+        "@types/node-cron": "^3.0.11",
+        "@types/node-telegram-bot-api": "^0.64.8",
+        "@types/nodemailer": "^6.4.17",
+        "@types/pg": "^8.11.11",
+        "@types/qrcode": "^1.5.5",
+        "@types/ws": "^8.5.14",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.3"
+    }
+}
+

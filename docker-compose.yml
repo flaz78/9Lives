@@ -1,0 +1,48 @@
+services:
+  db:
+    platform: linux/arm64
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ninelives
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./apps/gateway/src/storage/pg/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+
+  gateway:
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: apps/gateway/Dockerfile
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      GATEWAY_PORT: "3000"
+      GATEWAY_BIND: "0.0.0.0"
+      GATEWAY_TOKEN: "change_me"
+      DATABASE_URL: "postgres://postgres:postgres@db:5432/ninelives"
+      APP_MASTER_KEY: "please_use_32+_bytes_random_secret"
+      TELEGRAM_ENABLED: "true"
+      GMAIL_ENABLED: "true"
+      WHATSAPP_ENABLED: "false"
+      WHATSAPP_AUTH_DIR: "/app/data/whatsapp_auth"
+      PLAYWRIGHT_ENABLED: "true"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+      OUTLOOK_BRIDGE_URL: "http://host.docker.internal:8765"
+      OUTLOOK_BRIDGE_TOKEN: "${OUTLOOK_BRIDGE_TOKEN}"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./workspace:/app/workspace
+      - ./data:/app/data
+
+volumes:
+  pg_data:
