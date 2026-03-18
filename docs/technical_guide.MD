@@ -86,7 +86,7 @@ This is the simplest installation path for Linux, Windows, and Raspberry Pi.
 #### 1. Clone the repository
 
 ```bash
-git clone https://github.com/youruser/9Lives.git
+git clone https://github.com/flaz78/9Lives.git
 cd 9Lives
 ```
 
@@ -162,7 +162,7 @@ Then:
 ```bash
 sudo -u postgres psql -c "CREATE DATABASE ninelives;"
 sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
-git clone https://github.com/youruser/9Lives.git
+git clone https://github.com/flaz78/9Lives.git
 cd 9Lives
 pnpm install
 cp .env.example .env
@@ -180,7 +180,7 @@ Recommended options:
 Typical native setup:
 
 ```powershell
-git clone https://github.com/youruser/9Lives.git
+git clone https://github.com/flaz78/9Lives.git
 cd 9Lives
 pnpm install
 Copy-Item .env.example .env
