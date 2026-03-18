@@ -1,5 +1,6 @@
-# 9Lives
+ <img width="600"  alt="logo" src="https://github.com/user-attachments/assets/acb5b36c-561b-4f65-9007-07044a3fdeaa" />
 
+# 9Lives
 🚀 **Personal AI agents, under your control.**
 
 9Lives is a **local-first runtime for AI agents** that lets you run autonomous agents on your own infrastructure.
