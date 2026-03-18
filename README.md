@@ -1,4 +1,6 @@
- <img width="600"  alt="logo" src="https://github.com/user-attachments/assets/acb5b36c-561b-4f65-9007-07044a3fdeaa" />
+<p align="center">
+  <img src="assets/Top_9Lives.png" alt="9Lives Top" width="600"/>
+</p>
 
 # 9Lives
 🚀 **Personal AI agents, under your control.**
@@ -16,9 +18,13 @@ Create **Lives (agents)**, give them **Skills (tools)**, and orchestrate them wi
 
 ---
 
-# Demo
+<h2 align="center">🎬 Demo</h2>
+<h3 align="center">Control your AI agents from Telegram.</h3>
 
-Control your AI agents from Telegram.
+<p align="center">
+  <img src="assets/9LivesDemo.gif" alt="9Lives Demo" width="800"/>
+</p>
+
 
 User → Telegram  
 ↓  
@@ -127,7 +133,12 @@ Lives
 Skills  
 
 ---
+## 📚 Documentation
 
+Explore the full technical documentation:
+
+- 📖 [Technical Guide](docs/technical_guide.md) — complete overview of architecture, concepts, and setup
+  
 # Roadmap
 
 ## v0.1
