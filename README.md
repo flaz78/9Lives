@@ -137,7 +137,7 @@ Skills
 
 Explore the full technical documentation:
 
-- 📖 [Technical Guide](docs/technical_guide.md) — complete overview of architecture, concepts, and setup
+- 📖 [Technical Guide](docs/technical_guide.MD) — complete overview of architecture, concepts, and setup
   
 # Roadmap
 
