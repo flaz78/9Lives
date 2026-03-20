@@ -99,7 +99,7 @@ Define safety boundaries for agent execution.
 # Quick Start
 
 ```bash
-git clone https://github.com/yourusername/9lives
+git clone https://github.com/flaz78/9lives
 cd 9lives
 docker compose up
 ```
