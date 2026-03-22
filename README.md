@@ -101,7 +101,7 @@ Define safety boundaries for agent execution.
 ```bash
 git clone https://github.com/flaz78/9lives
 cd 9lives
-docker compose up
+docker compose up --build -d
 ```
 
 Open:
