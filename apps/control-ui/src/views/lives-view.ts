@@ -2,6 +2,7 @@
 ﻿import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { iconStyles, iconEdit, iconDelete, iconPlayArrow, iconSend, iconChat2 } from '../icons.js';
+import { type ModelListResponse, type ModelOption, withSelectedModel } from '../lib/llm-models.js';
 
 interface LiveGuardrail {
   skills?: { allow?: string[]; deny?: string[] };
@@ -45,6 +46,8 @@ export class LivesView extends LitElement {
   @state() private loading = true;
   @state() private editingLive: Partial<Live> | null = null;
   @state() private llmConfigs: LLMConfig[] = [];
+  @state() private modelOptions: ModelOption[] = [];
+  @state() private modelOptionsLoading = false;
   @state() private showCreateModal = false;
   @state() private runningLive: string | null = null;
   @state() private runPrompt = 'Hello! Who are you?';
@@ -144,6 +147,30 @@ export class LivesView extends LitElement {
       this.llmConfigs = await this.ws.request('llm_config.list');
     } catch {
       this.llmConfigs = [];
+    }
+  }
+
+  async loadModelOptions(llmConfigId?: string, keepSelection = true) {
+    this.modelOptionsLoading = true;
+    try {
+      const response = await this.ws.request('llm_model.list', { llm_config_id: llmConfigId || '' }) as ModelListResponse;
+      const live = this.editingLive;
+      const selectedModel = keepSelection ? live?.model_name : undefined;
+      const ensuredModel = selectedModel || response.defaultModel;
+      this.modelOptions = withSelectedModel(response.models || [], ensuredModel);
+
+      if (live) {
+        live.model_provider = response.provider || 'openai';
+        if (!selectedModel || !this.modelOptions.some((option) => option.id === selectedModel)) {
+          live.model_name = response.defaultModel;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load model options', e);
+      this.modelOptions = withSelectedModel([], this.editingLive?.model_name);
+    } finally {
+      this.modelOptionsLoading = false;
+      this.requestUpdate();
     }
   }
 
@@ -348,6 +375,7 @@ export class LivesView extends LitElement {
       llm_config_id: '',
       guardrail: null
     };
+    this.modelOptions = [];
     this.showGuardrail = false;
     this.guardrailDeniedSkills = '';
     this.guardrailMaxIter = '';
@@ -356,6 +384,7 @@ export class LivesView extends LitElement {
     this.jobs = [];
     this.resetJobForm();
     this.showCreateModal = true;
+    void this.loadModelOptions('', false);
   }
 
   openEdit(live: Live) {
@@ -369,6 +398,7 @@ export class LivesView extends LitElement {
     this.showCreateModal = false;
     this.resetJobForm();
     this.loadJobs(live.id);
+    void this.loadModelOptions(live.llm_config_id || '', true);
   }
 
   closeModal() {
@@ -376,6 +406,7 @@ export class LivesView extends LitElement {
     this.editingLive = null;
     this.runningLive = null;
     this.jobs = [];
+    this.modelOptions = [];
     this.resetJobForm();
   }
 
@@ -495,7 +526,7 @@ export class LivesView extends LitElement {
 
           <div class="form-group">
             <label>AI Connection (Provider)</label>
-            <select @change=${(e: any) => { live.llm_config_id = e.target.value; this.requestUpdate(); }}>
+            <select @change=${async (e: any) => { live.llm_config_id = e.target.value; await this.loadModelOptions(live.llm_config_id || '', false); }}>
               <option value="" ?selected=${!live.llm_config_id}>Default (OpenAI Cloud)</option>
               ${this.llmConfigs.map(c => html`<option value=${c.id} ?selected=${live.llm_config_id === c.id}>${c.name} (${c.provider})</option>`)}
             </select>
@@ -503,24 +534,12 @@ export class LivesView extends LitElement {
 
           <div class="form-group">
             <label>LLM Model (Model ID)</label>
-            <select @change=${(e: any) => { live.model_name = e.target.value; this.requestUpdate(); }}>
-                <option value="gpt-5.4" ?selected=${live.model_name === 'gpt-5.4'}>gpt-5.4</option>
-                <option value="gpt-5.4-mini" ?selected=${live.model_name === 'gpt-5.4-mini'}>gpt-5.4-mini</option>
-                <option value="gpt-5.4-nano" ?selected=${live.model_name === 'gpt-5.4-nano'}>gpt-5.4-nano</option>
-                <option value="gpt-5.2" ?selected=${live.model_name === 'gpt-5.2'}>gpt-5.2</option>
-                <option value="gpt-5-mini" ?selected=${live.model_name === 'gpt-5-mini'}>gpt-5-mini</option>
-                <option value="gpt-5-nano" ?selected=${live.model_name === 'gpt-5-nano'}>gpt-5-nano</option>    
-                <option value="gpt-4o-mini" ?selected=${live.model_name === 'gpt-4o-mini' || !live.model_name}>gpt-4o-mini</option>
-                <option value="gpt-4o" ?selected=${live.model_name === 'gpt-4o'}>gpt-4o</option>
-                <option value="o1-preview" ?selected=${live.model_name === 'o1-preview'}>o1-preview</option>
-                <option value="gemini-flash-latest" ?selected=${live.model_name === 'gemini-flash-latest'}>gemini-flash-latest (Stable)</option>
-                <option value="gemini-pro-latest" ?selected=${live.model_name === 'gemini-pro-latest'}>gemini-pro-latest (Stable)</option>
-                <option value="openai/gpt-oss-20b" ?selected=${live.model_name === 'openai/gpt-oss-20b'}>openai/gpt-oss-20b</option>
-                <option value="openai/gpt-oss-120b" ?selected=${live.model_name === 'openai/gpt-oss-120b'}>openai/gpt-oss-120b</option>
-                <option value="qwen/qwen3-32b" ?selected=${live.model_name === 'qwen/qwen3-32b'}>qwen/qwen3-32b</option>
-                <option value="moonshotai/kimi-k2-instruct-0905" ?selected=${live.model_name === 'moonshotai/kimi-k2-instruct-0905'}>moonshotai/kimi-k2-instruct-0905</option>
-                <option value="gemma-3-27b-it" ?selected=${live.model_name === 'gemma-3-27b-it'}>gemma-3-27b-it</option>
+            <select ?disabled=${this.modelOptionsLoading} @change=${(e: any) => { live.model_name = e.target.value; this.requestUpdate(); }}>
+                ${this.modelOptions.map(option => html`<option value=${option.id} ?selected=${live.model_name === option.id}>${option.label}</option>`)}
             </select>
+            <div style="font-size: 0.75rem; color: #8b9bb5;">
+              ${this.modelOptionsLoading ? 'Loading models...' : `Provider: ${live.model_provider || 'openai'}`}
+            </div>
           </div>
 
           <div class="form-group">
@@ -696,11 +715,6 @@ export class LivesView extends LitElement {
     `;
   }
 }
-
-
-
-
-
 
 
 

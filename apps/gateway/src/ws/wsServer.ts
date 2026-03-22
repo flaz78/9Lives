@@ -7,6 +7,7 @@ import { logger } from '../util/logger.js';
 import type { Frame, RequestFrame } from '@9lives/shared';
 import { query } from '../storage/pg/pool.js';
 import { encrypt, decrypt } from '../util/crypto.js';
+import { listLlmModels } from '../runtime/llmModelCatalog.js';
 
 // In-memory session store  
 const sessions = new Map<WebSocket, { deviceId: string; deviceName: string; authed: boolean }>();
@@ -776,6 +777,13 @@ async function dispatch(ws: WebSocket, wss: WebSocketServer, req: RequestFrame) 
             break;
         }
 
+        case 'llm_model.list': {
+            const { llm_config_id } = req.params;
+            const models = await listLlmModels(llm_config_id ?? null);
+            ok(ws, req.id, models);
+            break;
+        }
+
         case 'llm_config.create': {
             const { id = crypto.randomUUID(), name, provider, base_url, api_key } = req.params;
             const cipher = api_key ? encrypt(JSON.stringify(api_key)) : null;
@@ -900,7 +908,6 @@ async function dispatch(ws: WebSocket, wss: WebSocketServer, req: RequestFrame) 
             err(ws, req.id, 'METHOD_NOT_FOUND', `Unknown method: ${req.method}`);
     }
 }
-
 
 
 

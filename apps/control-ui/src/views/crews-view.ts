@@ -2,6 +2,7 @@
 ﻿import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { iconStyles, iconEdit, iconDelete, iconPlayArrow } from '../icons.js';
+import { type ModelListResponse, type ModelOption, withSelectedModel } from '../lib/llm-models.js';
 
 interface Crew {
   id: string;
@@ -41,6 +42,8 @@ export class CrewsView extends LitElement {
   @state() private crews: Crew[] = [];
   @state() private lives: LiveOption[] = [];
   @state() private llmConfigs: LLMConfig[] = [];
+  @state() private modelOptions: ModelOption[] = [];
+  @state() private modelOptionsLoading = false;
   @state() private telegramBots: any[] = [];
   @state() private loading = true;
   @state() private editingCrew: Partial<Crew> | null = null;
@@ -143,6 +146,27 @@ export class CrewsView extends LitElement {
     }
   }
 
+  async loadModelOptions(llmConfigId?: string, keepSelection = true) {
+    this.modelOptionsLoading = true;
+    try {
+      const response = await this.ws.request('llm_model.list', { llm_config_id: llmConfigId || '' }) as ModelListResponse;
+      const crew = this.editingCrew;
+      const selectedModel = keepSelection ? crew?.model_name : undefined;
+      const ensuredModel = selectedModel || response.defaultModel;
+      this.modelOptions = withSelectedModel(response.models || [], ensuredModel);
+
+      if (crew && (!selectedModel || !this.modelOptions.some((option) => option.id === selectedModel))) {
+        crew.model_name = response.defaultModel;
+      }
+    } catch (e) {
+      console.error('Failed to load crew model options', e);
+      this.modelOptions = withSelectedModel([], this.editingCrew?.model_name);
+    } finally {
+      this.modelOptionsLoading = false;
+      this.requestUpdate();
+    }
+  }
+
   async loadTelegramBots() {
     try {
       const res = await this.ws.request('creds.get', { key: 'telegram.bots' });
@@ -175,9 +199,11 @@ export class CrewsView extends LitElement {
       llm_config_id: '',
       model_name: 'gpt-5-mini',
     };
+    this.modelOptions = [];
     this.jobs = [];
     this.resetJobForm();
     this.showCreateModal = true;
+    void this.loadModelOptions('', false);
   }
   openEdit(crew: Crew) {
     this.editingCrew = {
@@ -188,16 +214,19 @@ export class CrewsView extends LitElement {
       llm_config_id: crew.llm_config_id || '',
       model_name: crew.model_name || 'gpt-5-mini',
     };
+    this.modelOptions = [];
     this.jobs = [];
     this.resetJobForm();
     this.loadJobs(crew.id);
     this.showCreateModal = false;
+    void this.loadModelOptions(crew.llm_config_id || '', true);
   }
   closeModal() {
     this.editingCrew = null;
     this.showCreateModal = false;
     this.runningCrew = null;
     this.jobs = [];
+    this.modelOptions = [];
     this.resetJobForm();
   }
   toggleChannel(channel: string) {
@@ -467,7 +496,7 @@ export class CrewsView extends LitElement {
           ${crew.orchestration_mode === 'supervisor_llm' ? html`
             <div class="form-group">
               <label>Crew AI Connection</label>
-              <select @change=${(e: any) => { crew.llm_config_id = e.target.value; this.requestUpdate(); }}>
+              <select @change=${async (e: any) => { crew.llm_config_id = e.target.value; await this.loadModelOptions(crew.llm_config_id || '', false); }}>
                 <option value="" ?selected=${!crew.llm_config_id}>Default (OpenAI Cloud)</option>
                 ${this.llmConfigs.map(c => html`<option value=${c.id} ?selected=${crew.llm_config_id === c.id}>${c.name} (${c.provider})</option>`)}
               </select>
@@ -475,18 +504,12 @@ export class CrewsView extends LitElement {
 
             <div class="form-group">
               <label>Crew LLM Model</label>
-              <select @change=${(e: any) => { crew.model_name = e.target.value; this.requestUpdate(); }}>
-                <option value="gpt-5.4" ?selected=${crew.model_name === 'gpt-5.4'}>gpt-5.4</option>
-                <option value="gpt-5.4-mini" ?selected=${crew.model_name === 'gpt-5.4-mini'}>gpt-5.4-mini</option>
-                <option value="gpt-5.4-nano" ?selected=${crew.model_name === 'gpt-5.4-nano'}>gpt-5.4-nano</option>
-                <option value="gpt-5.2" ?selected=${crew.model_name === 'gpt-5.2'}>gpt-5.2</option>
-                <option value="gpt-5-mini" ?selected=${crew.model_name === 'gpt-5-mini' || !crew.model_name}>gpt-5-mini</option>
-                <option value="gpt-5-nano" ?selected=${crew.model_name === 'gpt-5-nano'}>gpt-5-nano</option>
-                <option value="gpt-4o-mini" ?selected=${crew.model_name === 'gpt-4o-mini'}>gpt-4o-mini</option>
-                <option value="gpt-4o" ?selected=${crew.model_name === 'gpt-4o'}>gpt-4o</option>
-                <option value="gemini-flash-latest" ?selected=${crew.model_name === 'gemini-flash-latest'}>gemini-flash-latest</option>
-                <option value="gemini-pro-latest" ?selected=${crew.model_name === 'gemini-pro-latest'}>gemini-pro-latest</option>
+              <select ?disabled=${this.modelOptionsLoading} @change=${(e: any) => { crew.model_name = e.target.value; this.requestUpdate(); }}>
+                ${this.modelOptions.map(option => html`<option value=${option.id} ?selected=${crew.model_name === option.id}>${option.label}</option>`)}
               </select>
+              <div style="font-size: 0.75rem; color: #8b9bb5;">
+                ${this.modelOptionsLoading ? 'Loading models...' : 'Models loaded from selected provider'}
+              </div>
             </div>
           ` : ''}
 
@@ -640,8 +663,6 @@ export class CrewsView extends LitElement {
     `;
   }
 }
-
-
 
 
 
