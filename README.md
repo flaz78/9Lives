@@ -98,6 +98,10 @@ Define safety boundaries for agent execution.
 
 # Quick Start
 
+<p align="center">
+  <img src="assets/TerminalTutorial.gif" alt="9Lives Top" width="800"/>
+</p>
+
 ```bash
 git clone https://github.com/flaz78/9lives
 cd 9lives
