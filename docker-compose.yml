@@ -33,6 +33,7 @@ services:
       WHATSAPP_ENABLED: "false"
       WHATSAPP_AUTH_DIR: "/app/data/whatsapp_auth"
       PLAYWRIGHT_ENABLED: "true"
+      REMOTION_PROJECT_DIR: "/app/remotion"
       OPENAI_API_KEY: "${OPENAI_API_KEY}"
       OUTLOOK_BRIDGE_URL: "http://host.docker.internal:8765"
       OUTLOOK_BRIDGE_TOKEN: "${OUTLOOK_BRIDGE_TOKEN}"
@@ -43,6 +44,7 @@ services:
     volumes:
       - ./workspace:/app/workspace
       - ./data:/app/data
+      - ../remotion:/app/remotion
 
 volumes:
   pg_data:

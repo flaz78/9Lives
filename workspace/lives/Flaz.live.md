@@ -4,11 +4,11 @@ name: "Flaz"
 description: ""
 model:
   provider: openai
-  name: gpt-5.4-mini
+  name: gpt-5.4
   config_id: cddb872b-c96a-4dde-b1b8-c535ef899054
 routing:
   default: false
-skills: ["browser_automation","tavily","chat_memory","excel_builder","filesystem","gmail","google_calendar","google_drive","image_base64","outlook_calendar","pdf_reader","reddit","google_trends","telegram","medium","spotify","word_builder","cron_scheduler","printer"]
+skills: ["tavily","chat_memory","excel_builder","filesystem","gmail","google_calendar","google_drive","image_base64","outlook_calendar","pdf_reader","reddit","google_trends","telegram","medium","spotify","word_builder","cron_scheduler","printer","remotion-video","browser_automation_playwright"]
 webhook_ids: []
 policy:
   tool_allow: []

@@ -28,6 +28,7 @@ import './runtime/imageBase64Tools.js';
 import './runtime/webhookTools.js';
 import './runtime/tavilyTools.js';
 import './runtime/printTools.js';
+import './runtime/remotionTools.js';
 logger.info('Tool registration complete.');
 
 async function registerOptionalTools() {

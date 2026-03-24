@@ -1,4 +1,4 @@
-# Node
+git # Node
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -48,3 +48,7 @@ config/local.json
 # Raspberry specific (se usi path locali)
 #data/
 #runtime/
+workspace/remotion/
+workspace/storage/chat_uploads/
+workspace/storage/out/
+workspace/lives/
