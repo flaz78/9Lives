@@ -1,0 +1,38 @@
+{
+  "scene_name": "cube_render_demo",
+  "objects": [
+    {
+      "type": "cube",
+      "name": "hero_cube",
+      "location": [0, 0, 1],
+      "rotation": [0, 0, 0.785],
+      "scale": [1, 1, 1],
+      "material": {
+        "base_color": [1, 0, 0, 1],
+        "metallic": 0.85,
+        "roughness": 0.2
+      }
+    }
+  ],
+  "lights": [
+    {
+      "type": "area",
+      "name": "soft_key",
+      "location": [3, -3, 4],
+      "rotation": [0.8, 0, 0.8],
+      "energy": 3000
+    }
+  ],
+  "camera": {
+    "location": [4, -4, 3],
+    "rotation": [1.1, 0, 0.78],
+    "lens": 50
+  },
+  "render": {
+    "engine": "CYCLES",
+    "resolution_x": 1280,
+    "resolution_y": 720,
+    "output_path": "workspace/storage/blender/outputs/cube_render.png"
+  },
+  "save_path": "workspace/storage/blender/projects/cube_render_demo.blend"
+}

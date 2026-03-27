@@ -1,0 +1,44 @@
+{
+  "scene_name": "product_demo",
+  "objects": [
+    {
+      "type": "cube",
+      "name": "main_cube",
+      "location": [0, 0, 1],
+      "rotation": [0, 0, 0.785],
+      "scale": [1, 1, 1],
+      "material": {
+        "base_color": [1, 0, 0, 1],
+        "metallic": 0.8,
+        "roughness": 0.2
+      }
+    },
+    {
+      "type": "plane",
+      "name": "floor",
+      "location": [0, 0, 0],
+      "scale": [6, 6, 1]
+    }
+  ],
+  "lights": [
+    {
+      "type": "area",
+      "name": "key_light",
+      "location": [3, -3, 4],
+      "rotation": [0.8, 0, 0.8],
+      "energy": 3000
+    }
+  ],
+  "camera": {
+    "location": [4, -4, 3],
+    "rotation": [1.1, 0, 0.78],
+    "lens": 50
+  },
+  "render": {
+    "engine": "CYCLES",
+    "resolution_x": 1280,
+    "resolution_y": 720,
+    "output_path": "workspace/storage/blender/outputs/render.png"
+  },
+  "save_path": "workspace/storage/blender/projects/product_demo.blend"
+}

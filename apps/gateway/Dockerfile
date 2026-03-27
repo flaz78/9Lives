@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     cups-client \
+    python3 \
     chromium \
     fonts-freefont-ttf \
     fonts-noto-color-emoji \
@@ -65,4 +66,6 @@ EXPOSE 18789
 USER root
 
 CMD ["node", "apps/gateway/dist/index.js"]
+
+
 

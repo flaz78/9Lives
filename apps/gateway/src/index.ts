@@ -29,6 +29,8 @@ import './runtime/webhookTools.js';
 import './runtime/tavilyTools.js';
 import './runtime/printTools.js';
 import './runtime/remotionTools.js';
+import './runtime/blenderTools.js';
+import './runtime/blenderLiveTools.js';
 logger.info('Tool registration complete.');
 
 async function registerOptionalTools() {
@@ -95,3 +97,5 @@ server.on('error', (err: any) => {
     logger.error('Server error:', err);
     process.exit(1);
 });
+
+

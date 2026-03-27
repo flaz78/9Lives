@@ -1,0 +1,51 @@
+{
+  "scene_name": "minimal_product_scene",
+  "objects": [
+    {
+      "type": "plane",
+      "name": "floor",
+      "location": [0, 0, 0],
+      "scale": [6, 6, 1]
+    },
+    {
+      "type": "cylinder",
+      "name": "pedestal",
+      "location": [0, 0, 0.5],
+      "scale": [0.8, 0.8, 0.5],
+      "material": {
+        "base_color": [0.95, 0.95, 0.95, 1],
+        "metallic": 0,
+        "roughness": 0.35
+      }
+    }
+  ],
+  "lights": [
+    {
+      "type": "area",
+      "name": "left_softbox",
+      "location": [-3, -2, 4],
+      "rotation": [0.9, 0, -0.5],
+      "energy": 2200
+    },
+    {
+      "type": "area",
+      "name": "rim_light",
+      "location": [2.5, 2, 3],
+      "rotation": [1.1, 0, 2.2],
+      "energy": 1400
+    }
+  ],
+  "camera": {
+    "location": [0, -6, 2.2],
+    "rotation": [1.3, 0, 0],
+    "lens": 60
+  },
+  "render": {
+    "engine": "EEVEE",
+    "resolution_x": 1600,
+    "resolution_y": 900,
+    "background_color": [0.98, 0.98, 0.98, 1],
+    "output_path": "workspace/storage/blender/outputs/minimal_product.png"
+  },
+  "save_path": "workspace/storage/blender/projects/minimal_product_scene.blend"
+}

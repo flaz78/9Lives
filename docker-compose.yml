@@ -37,6 +37,8 @@ services:
       OPENAI_API_KEY: "${OPENAI_API_KEY}"
       OUTLOOK_BRIDGE_URL: "http://host.docker.internal:8765"
       OUTLOOK_BRIDGE_TOKEN: "${OUTLOOK_BRIDGE_TOKEN}"
+      BLENDER_LIVE_BASE_URL: "http://host.docker.internal:8765"
+      BLENDER_LIVE_TOKEN: "U_CWtiP7SV4SF7xoVBmbdXXoeaWfVkN0"
     depends_on:
       - db
     ports:
@@ -48,3 +50,4 @@ services:
 
 volumes:
   pg_data:
+
