@@ -74,6 +74,7 @@ Control UI <-> Gateway <-> PostgreSQL
 | Git | 2.x |
 
 For browser automation on bare metal, Chromium must also be installed.
+For Blender batch mode in Docker, the gateway image also needs Python 3 available; for Blender live mode, Blender itself runs on the host machine with the 9Lives addon installed.
 
 ---
 
@@ -214,7 +215,7 @@ The default `docker-compose.yml` already includes:
 - `extra_hosts: host.docker.internal:host-gateway`
 - public DNS resolvers for more stable name resolution
 
-This allows the gateway container to reach host-local services such as LM Studio, Ollama, or a local Outlook bridge.
+This allows the gateway container to reach host-local services such as LM Studio, Ollama, a local Outlook bridge, or a locally running Blender live bridge exposed by the 9Lives Blender addon.
 
 ### Permissions and volumes
 
@@ -249,6 +250,15 @@ Common variables:
 | `GMAIL_ENABLED` | enable Gmail integration |
 | `WHATSAPP_ENABLED` | enable WhatsApp adapter |
 | `PLAYWRIGHT_ENABLED` | enable Playwright tools |
+| `REMOTION_PROJECT_DIR` | path to the local Remotion workspace used by `remotion-video` |
+| `PYTHON_EXECUTABLE` | optional Python interpreter override for Python-backed skills such as Blender batch mode |
+| `BLENDER_EXECUTABLE` | absolute Blender executable path for headless batch rendering when Blender is installed where the gateway runs |
+| `BLENDER_SKILL_ROOT` | allowed root for Blender batch read/write paths |
+| `BLENDER_ALLOW_EXTERNAL_PATHS` | allow Blender batch operations outside `BLENDER_SKILL_ROOT` when explicitly needed |
+| `BLENDER_SKILL_TIMEOUT_MS` | timeout for Blender batch subprocess calls |
+| `BLENDER_LIVE_BASE_URL` | base URL for the Blender live bridge addon, typically `http://host.docker.internal:8765` in Docker |
+| `BLENDER_LIVE_TOKEN` | bearer token shared with the Blender live bridge addon |
+| `BLENDER_LIVE_TIMEOUT_MS` | timeout for Blender live bridge HTTP calls |
 | `BOOTSTRAP_DIR` | optional bootstrap override |
 | `SKILLS_DIR` | optional skills directory override |
 
@@ -470,8 +480,33 @@ Skills live in `workspace/skills/` and can expose tools for:
 - Tavily
 - webhooks
 - Excel, Word, PDF, and image handling
+- Remotion video composition and rendering (`remotion-video`)
+- Blender batch scene generation and Blender live bridge control (`blender_skill`)
 - memory and chat history
 - printing
+
+Two notable production-oriented skills in the current workspace are:
+
+### `remotion-video`
+
+`remotion-video` is designed for local Remotion projects mounted into the gateway. It exposes tools to inspect the current project, save/update source files, list compositions, and render videos from a selected composition. Typical workflow:
+
+1. `remotion.getProjectState` or `remotion.listCompositions`
+2. `remotion.saveFiles` to create/update `src/` components and compositions
+3. `remotion.renderVideo` to render a draft or final output into the configured render directory
+
+The gateway runtime for this skill lives in `apps/gateway/src/runtime/remotionTools.ts` and relies on `REMOTION_PROJECT_DIR` plus a working local Remotion install.
+
+### `blender_skill`
+
+`blender_skill` supports two Blender execution modes:
+
+1. Batch mode
+   The gateway launches Blender headlessly through Python to create scenes, objects, materials, lights, cameras, renders, and imports/exports in a deterministic offline job. This mode uses `BLENDER_EXECUTABLE`, `PYTHON_EXECUTABLE`, and the path-safety settings under `BLENDER_SKILL_ROOT`.
+2. Live mode
+   A Blender addon (`9Lives Live Bridge`) runs on the host machine and exposes a local authenticated bridge that 9Lives can reach from Docker via `host.docker.internal`. This mode is intended for realtime scene editing in an already open Blender session.
+
+The skill now exposes explicit modeling-oriented tools such as `blender.liveCreateObject`, `blender.liveModifyObject`, `blender.liveAssignMaterial`, `blender.liveCreateLight`, `blender.liveCreateCamera`, `blender.liveRenderStill`, and `blender.liveBuildScene`, so Lives can compose complex assets from supported primitives instead of relying on a single generic bridge command.
 
 ---
 
