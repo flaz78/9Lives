@@ -38,6 +38,14 @@ Example use case:
 
 Morning briefing agent that gathers news and sends you a daily report.
 
+
+### Example 2
+I asked to 9Lives o create me a 3D model of a Raspeberry PI 5 With the new Blender SKILL
+
+<img width="1903" height="1004" alt="image" src="https://github.com/user-attachments/assets/03eff6cf-c2f9-434c-bb4f-dc22a725471c" />
+
+
+
 ---
 
 # Why 9Lives
@@ -134,7 +142,8 @@ Crew Orchestrator
 ↓  
 Lives  
 ↓  
-Skills  
+Skills 
+
 
 ---
 ## 📚 Documentation
